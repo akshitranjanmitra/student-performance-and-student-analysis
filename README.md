@@ -1,91 +1,134 @@
-
 PROJECT DOCUMENTATION
 Student Performance & Attendance Analysis
 Python Data Analytics Project
 Dataset
-Dataset size stated in
-source
+Dataset Size
 Technology
-college_student_performance_100.csv
-100 records
-Python with pandas
 Repository
+college_student_performance_100.csv
+100 records (6 columns)
+Python with 
+pandas (no graphs or plotting libraries)
+https://github.com/akshitranjanmitra/student-performance-and-student
+analysis.git
 1. Introduction
-github.com/akshatv312/hcltrainingstudentperformance
 Student Performance & Attendance Analysis is a Python-based data analytics project designed to
-examine academic scores and attendance for a college student dataset, maintained at
-https://github.com/akshatv312/hcltrainingstudentperformance. The source identifies the input file as
-college_student_performance_100.csv and states that it contains 100 records. The project uses
-pandas for data handling and analysis without graphical plots.
+examine academic scores and attendance for a college student dataset. The project uses
+college_student_performance_100.csv containing 100 student records and relies on 
+data loading, cleaning, validation, and tabular statistical reporting without graphs.
 2. Project Objectives
-Load and inspect the student dataset
-Clean the data by removing duplicate student records, standardizing department names, and
-handling invalid or missing numeric values
-Calculate a final score from mathematics, science, and English scores
-Summarize student performance using average, highest, and lowest final scores
-Evaluate grades and attendance status for the first 10 students
-Classify overall performance using the average final score
+pandas for
+Load and inspect the 100-record student dataset from 
+college_student_performance_100.csv .
+Clean the data by removing duplicate 
+student_id entries, standardizing 
+department names, and
+handling out-of-range (<0 or >100) or missing numeric values.
+Calculate a composite 
+final_score from 
+math_score , 
+science_score , and 
+english_score .
+Summarize overall student performance using average, highest, and lowest final scores along with
+mean attendance percentage.
+Evaluate grades (
+A+ , A, B, C, 
+Fail ) and attendance eligibility status (<75% flagged as 
+Attendance! ) for the first 10 students.
+Classify overall cohort performance as 
+GOOD (average ≥60) or 
+Low
+NEEDS IMPROVEMENT (average
+<60).
 3. Tools and Technologies
-Programming language: Python
-Data analysis library: pandas
-Input format: CSV (comma-separated values)
-Dataset: college_student_performance_100.csv
-The supplied source names pandas as the library but does not show a complete environment setup or
-package-version specification.
-4. Dataset Description
-The source identifies a 100-record college student dataset. The code references the following fields:
+Programming language: Python 3.9+
+Data analysis library: 
+pandas
+Input format: CSV (
+college_student_performance_100.csv )
+Source repository: 
+analysis.git
+https://github.com/akshitranjanmitra/student-performance-and-student
+Visualization policy: Text and table outputs only (no graphs or chart libraries)
 Student Performance & Attendance Analysis — Project Documentation
-Page 1 of 6
+Page 1 of 3
+4. Dataset Description
+The dataset 
+college_student_performance_100.csv contains 100 records (
+STU101
+STU200 )
+across four departments (Computer Science, Electronics, Mechanical, Commerce), including 2
+missing values in 
+attendance_pct and 2 missing values in 
+science_score .
 Field
 student_id
 department
 attendance_pct
-math_score,
-science_score,
+math_score
+science_score
+Purpose and Validation in Analysis
+Unique student identifier used when deduplicating records and printing student report
+cards.
+Academic department normalized with
+.astype(str).str.strip().str.title() .
+Class attendance percentage; checked against 0–100 bounds, mean-imputed for
+missing values, and evaluated against the 75.0% threshold.
+final_score .
+Mathematics exam score (0–100); validated, mean-imputed if missing, and averaged
+into 
+Science exam score (0–100); validated, mean-imputed if missing, and averaged into
+final_score .
 english_score
-Purpose indicated by the source
-Student identifier, used when removing duplicate records and displaying report
-card entries
-Student department, standardized using title case
-Attendance percentage, checked against the 0–100 range and 75% threshold
-Subject scores checked against 0–100 and averaged to form final_score
+English exam score (0–100); validated, mean-imputed if missing, and averaged into
+final_score .
 5. Data Loading and Preprocessing
-The code loads college_student_performance_100.csv with pd.read_csv(), prints --- Original
-Dataset ---, Total Rows: {len(df)}, and df.head(), drops duplicate student_id rows (resetting
-the index), and cleans department via .astype(str).str.strip().str.title().
-# 1. LOAD DATASET
+The script loads 
+college_student_performance_100.csv via
+pd.read_csv("college_student_performance_100.csv") , displays the initial row count and
+preview rows, removes duplicate 
+student_id entries with a reset index, and standardizes
+department labels.
+6. Data Cleaning and Handling Missing Values
+Values below 0 or above 
+100 in 
+attendance_pct , 
+english_score are set to 
+None (
+math_score , 
+science_score , and
+NaN ). Missing numeric entries are then filled using column means
+(d
+f.fillna(df.mean(numeric_only=True)) ), and 
+final_score is computed as the 3-subject
+average rounded to 2 decimal places.
+7. Student Performance Analysis, Grade Calculation & Attendance Evaluation
+Using a 
+while loop over 
+final_score , the script computes the cohort average (
+(10
+0.0 ), and lowest (
+55.43 ) scores alongside average attendance (
+77.57 ), highest
+77.64% ). A 
+for loop over the
+first 10 students assigns grades (
+A+ : ≥90, A: ≥75, B: ≥60, C: ≥40, 
+Fail : <40) and attendance flags
+(<75% as 
+Low Attendance! ), concluding with 
+Overall Performance: GOOD .
+Student Performance & Attendance Analysis — Project Documentation
+Page 2 of 3
+import pandas as pd
 df = pd.read_csv("college_student_performance_100.csv")
-print("--- Original Dataset ---")
-print(f"Total Rows: {len(df)}")
-print(df.head())
-# Duplicate & department cleanup
 df = df.drop_duplicates(subset=["student_id"]).reset_index(drop=True)
 df["department"] = df["department"].astype(str).str.strip().str.title()
-6. Data Cleaning and Handling Missing Values
-Out-of-range values (< 0 or > 100) in attendance_pct, math_score, science_score, and
-english_score are set to None, missing numeric entries are filled with
-df.fillna(df.mean(numeric_only=True)), final_score is computed as the row-wise mean of the
-three subject scores rounded to 2 decimals, and --- After Cleaning --- with Total Rows:
-{len(df)} is printed.
-df.loc[(df["attendance_pct"] < 0) | (df["attendance_pct"] > 100), "attendance_pct"] 
-= None
-df.loc[(df["math_score"] < 0) | (df["math_score"] > 100), "math_score"] = None
-df.loc[(df["science_score"] < 0) | (df["science_score"] > 100), "science_score"] = 
-None
-df.loc[(df["english_score"] < 0) | (df["english_score"] > 100), "english_score"] = 
-None
+for col in ["attendance_pct", "math_score", "science_score", "english_score"]:
+df.loc[(df[col] < 0) | (df[col] > 100), col] = None
 df = df.fillna(df.mean(numeric_only=True))
 df["final_score"] = df[["math_score", "science_score", 
 "english_score"]].mean(axis=1).round(2)
-print("\n--- After Cleaning ---")
-print(f"Total Rows: {len(df)}")
-Student Performance & Attendance Analysis — Project Documentation
-Page 2 of 6
-7. Student Performance Analysis
-The code converts final_score and attendance_pct to marks_list and attendance_list, sums
-marks_list in a while i < len(marks_list) loop to get average, finds highest (max(marks_list))
-and lowest (min(marks_list)), and prints Average Final Score, Highest Final Score, Lowest
-Final Score, and Average Attendance (sum(attendance_list) / len(attendance_list)).
 marks_list = df["final_score"].tolist()
 attendance_list = df["attendance_pct"].tolist()
 total = 0
@@ -94,102 +137,10 @@ while i < len(marks_list):
 total = total + marks_list[i]
 i = i + 1
 average = total / len(marks_list)
-highest = max(marks_list)
-lowest = min(marks_list)
-print("\n--- Overall Analysis ---")
-print(f"Average Final Score : {average:.2f}")
-print(f"Highest Final Score : {highest}")
-print(f"Lowest Final Score  : {lowest}")
-print(f"Average Attendance  : {sum(attendance_list) / len(attendance_list):.2f}%")
-8. Grade Calculation and Attendance Evaluation
-A for j in range(10) loop builds the report card for the first 10 rows using
-df['student_id'].iloc[j], assigning A+ (>=90), A (>=75), B (>=60), C (>=40), or Fail (<40), setting
-status to Low Attendance! when attend < 75 and Good otherwise, and finally printing Overall
-Performance: GOOD if average >= 60 or Overall Performance: NEEDS IMPROVEMENT otherwise.
+print(f"Average Final Score: {average:.2f} | Highest: {max(marks_list)} | Lowest: 
+{min(marks_list)}")
+print(f"Average Attendance : {sum(attendance_list) / len(attendance_list):.2f}%")
+print("Overall Performance: GOOD" if average >= 60 else "Overall Performance: NEEDS 
+IMPROVEMENT")
 Student Performance & Attendance Analysis — Project Documentation
-Page 3 of 6
-print()
-j  ():
-mark = marks_list[j]
-attend = attendance_list[j]
-mark >= :
-grade = 
-mark >= :
-grade = 
-mark >= :
-grade = 
-mark >= :
-grade = 
-:
-grade = 
-status =   attend <   
-()
-average >= :
-()
-:
-()"\n--- Report Card (First 10 Students) --
-"forinrange10if90"A+"elif75"A"elif60"B"elif40"C"else"Fail""Low 
-Attendance!"if75else"Good"printf"{df['student_id'].iloc[j]} - Marks: {mark:.1f}, 
-Grade: {grade}, Attendance: {attend:.1f}%, {status}"if60print"\nOverall 
-Performance: GOOD"elseprint"\nOverall Performance: NEEDS IMPROVEMENT"
-Student Performance & Attendance Analysis — Project Documentation
-Page 4 of 6
-9. Complete Python Source Code
-import pandas  pd
-df = pd.read_csv()
-()
-()
-(df.head())
-df = df.drop_duplicates(subset=[]).reset_index(drop=)
-df[] = df[].astype().str.strip().str.title()
-df.loc[(df[] < ) | (df[] > ), ] = 
-df.loc[(df[] < ) | (df[] > ), ] = 
-df.loc[(df[] < ) | (df[] > ), ] = 
-df.loc[(df[] < ) | (df[] > ), ] = 
-df = df.fillna(df.mean(numeric_only=))
-df[] = df[[, , ]].mean(axis=).round()
-()
-()
-marks_list = df[].tolist()
-attendance_list = df[].tolist()
-total = 
-i = 
- i < (marks_list):
-    total = total + marks_list[i]
-    i = i + 
-average = total / (marks_list)
-highest = (marks_list)
-lowest = (marks_list)
-()
-()
-()
-()
-()
-()
- j  ():
-    mark = marks_list[j]
-    attend = attendance_list[j]
-     mark >= :
-        grade = 
-     mark >= :
-        grade = 
-     mark >= :
-grade=
-Student Performance & Attendance Analysis — Project Documentation Page 5 of 6
-as# 1. LOAD DATASET"college_student_performance_100.csv"print"--- Original Dataset ---"printf"Total Rows: {len(df)}"print# 2. DATA 
-CLEANING"student_id"True"department""department"str"attendance_pct"0"attendance_pct
-"100"attendance_pct"None"math_score"0"math_score"100"math_score"None"science_score"
-0"science_score"100"science_score"None"english_score"0"english_score"100"english_sc
-ore"NoneTrue"final_score""math_score""science_score""english_score"12print"\n--- 
-After Cleaning ---"printf"Total Rows: {len(df)}"# 3. 
-ANALYSIS"final_score""attendance_pct"00whilelen1lenmaxminprint"\n--- Overall 
-Analysis ---"printf"Average Final Score : {average:.2f}"printf"Highest Final Score 
-: {highest}"printf"Lowest Final Score  : {lowest}"printf"Average Attendance  : 
-{sum(attendance_list) / len(attendance_list):.2f}%"# 4. GRADE + ATTENDANCEprint"\n--- Report Card (First 10 Students) --
-"forinrange10if90"A+"elif75"A"elif60"B"elif40"C"else"Fail""Low 
-Attendance!"if75else"Good"printf"{df['student_id'].iloc[j]} - Marks: {mark:.1f}, 
-Grade: {grade}, Attendance: {attend:.1f}%, {status}"# 5. FINAL 
-RESULTif60print"\nOverall Performance: GOOD"elseprint"\nOverall Performance: NEEDS 
-IMPROVEMENT"
-Student Performance & Attendance Analysis — Project Documentation
-Page 6 of 6
+Page 3 of 3
